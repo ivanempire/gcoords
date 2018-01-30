@@ -1,0 +1,25 @@
+{
+    "name":"gcoords",
+    "version":"1.0.0",
+    "description":"NPM module to look up a city's coordinates and vice versa",
+    "main":"index.js",
+    "scripts":{
+        "test":"echo \"Error:no test specified\" && exit 1"
+    },
+    "keywords":[
+        "google",
+        "maps",
+        "city",
+        "coordinates",
+        "geography",
+        "longitude",
+        "latitude",
+        "lookup"
+    ],
+    "repository":{
+        "type":"git",
+        "url":"git@github.com:ivanempire/gcoords.git"
+    },
+    "author":"Ivan Melnikov",
+    "license":"ISC"
+}
