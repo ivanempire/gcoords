@@ -7,19 +7,19 @@ A tiny NPM module for looking up coordinates from an address. Relies on the Goog
 Import it into your project:
 
 ```javascript
-const newGeo = require("ivan-geo");
+const gcoords = require("gcoords");
 ```
 
 Initialize with an API key and data format.
 
 ```javascript
-newGeo.init(<YOUR_API_KEY>,"json");
+gcoords.init(<YOUR_API_KEY>,"json");
 ```
 
 Query for coordinates:
 
 ```javascript
-newGeo.getCoords("Rome, Italy",function(resp) {
+gcoords.getCoords("Rome, Italy",function(resp) {
 	console.log(resp);
 });
 ```
