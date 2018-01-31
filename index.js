@@ -18,12 +18,12 @@ exports.init = function(apikey, format) {
 		throw "Invalid data format exception";
 	}
 
-	ENDPOINT_URL += dataFormat + "?address=";
+	ENDPOINT_URL += dataFormat;
 };
 
 exports.getCoords = function(inputString,callback) {
 	var address = encodeURIComponent(inputString);
-	var requestUrl = ENDPOINT_URL + address;
+	var requestUrl = ENDPOINT_URL + "?address=" + address;
 
 	requestUrl += "&key=" + API_KEY;
 
@@ -45,3 +45,25 @@ exports.getCoords = function(inputString,callback) {
 		});
 	});
 };
+
+exports.getLocation = function(coords,callback) {
+	var point = coords[0]+","+coords[1];
+
+	var requestUrl = ENDPOINT_URL + "?latlng=" + point;
+	requestUrl += "&key=" + API_KEY;
+
+	https.get(requestUrl, (resp) => {
+
+			var body = "";
+
+			resp.on("data", function(chunk) {
+				body += chunk;
+			});
+
+			resp.on("end", function() {
+				var responseObject = JSON.parse(body);
+
+				callback(responseObject.results[0].formatted_address);
+			});
+		});	
+}

@@ -16,13 +16,21 @@ Initialize with an API key and data format.
 gcoords.init(<YOUR_API_KEY>,"json");
 ```
 
-Query for coordinates:
+Lookup location's coordinates:
 
 ```javascript
 gcoords.getCoords("Rome, Italy",function(resp) {
 	console.log(resp);
 });
 ```
+
+Lookup coordinates' address:
+
+````javascript
+gcoords.getLocation(["40.714224","-73.961452"],function(resp) {
+	console.log(resp);
+});
+````
 
 ### Roadmap
  - [x] JSON support
