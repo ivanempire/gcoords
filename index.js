@@ -27,31 +27,26 @@ exports.getCoords = function(inputString,callback) {
 
 	requestUrl += "&key=" + API_KEY;
 
-	https.get(requestUrl, (resp) => {
-
-		var body = "";
-
-		resp.on("data", function(chunk) {
-			body += chunk;
-		});
-
-		resp.on("end", function() {
-			var responseObject = JSON.parse(body);
-
-			var lat = responseObject.results[0].geometry.location.lat;
-			var lng = responseObject.results[0].geometry.location.lng;
-
-			callback({"lat":lat,"lng":lng});
+	makeRequest(requestUrl,"json", (resp) => {
+		callback({
+			"lat":resp.results[0].geometry.location.lat,
+			"lng":resp.results[0].geometry.location.lng
 		});
 	});
 };
 
 exports.getLocation = function(coords,callback) {
 	var point = coords[0]+","+coords[1];
-
 	var requestUrl = ENDPOINT_URL + "?latlng=" + point;
+	
 	requestUrl += "&key=" + API_KEY;
 
+	makeRequest(requestUrl,"json", (resp) => {
+		callback(resp.results[0].formatted_address);
+	});
+};
+
+function makeRequest(requestUrl,dataformat,callback) {
 	https.get(requestUrl, (resp) => {
 
 			var body = "";
@@ -61,9 +56,10 @@ exports.getLocation = function(coords,callback) {
 			});
 
 			resp.on("end", function() {
-				var responseObject = JSON.parse(body);
-
-				callback(responseObject.results[0].formatted_address);
+				if(dataformat === "json") {
+					var responseObject = JSON.parse(body);
+					callback(responseObject);
+				}
 			});
-		});	
+		});
 }
