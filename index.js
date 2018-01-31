@@ -55,13 +55,30 @@ function makeRequest(requestUrl,dataformat,callback) {
 			});
 
 			resp.on("end", function() {
-				if(body.status !== "OK") {
-					console.log("Google Maps API exception: " + JSON.parse(body).error_message);
-				} else {
+				var requestStatus = body.status;
+				switch(requestStatus) {
+					//Result-related errors
+					case "OK":
 					if(dataformat === "json") {
 						var responseObject = JSON.parse(body);
 						callback(responseObject);
+					} else {
+						//XML logic here
 					}
+					break;
+					case "ZERO_RESULTS":
+						console.log("Google Geocode API returned zero results.");
+					break;
+					
+					//Putting these three together as usability errors
+					case "OVER_QUERY_LIMIT":
+					case "REQUEST_DENIED":
+					case "INVALID_REQUEST":
+						console.log("Google Maps API exception: " + JSON.parse(body).error_message);
+					break;
+					case "UNKNOWN_ERROR":
+						console.log("Google Geocode API returned an unknown error. Try again.");
+					break;
 				}
 			});
 		});
