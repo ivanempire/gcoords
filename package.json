@@ -1,12 +1,12 @@
 {
-    "name":"gcoords",
-    "version":"1.0.0",
-    "description":"NPM module to look up a city's coordinates and vice versa",
-    "main":"index.js",
-    "scripts":{
-        "test":"echo \"Error:no test specified\" && exit 1"
+    "name": "gcoords",
+    "version": "1.0.0",
+    "description": "NPM module to look up a city's coordinates and vice versa",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error:no test specified\" && exit 1"
     },
-    "keywords":[
+    "keywords": [
         "google",
         "maps",
         "city",
@@ -16,10 +16,13 @@
         "latitude",
         "lookup"
     ],
-    "repository":{
-        "type":"git",
-        "url":"git@github.com:ivanempire/gcoords.git"
+    "repository": {
+        "type": "git",
+        "url": "git@github.com:ivanempire/gcoords.git"
     },
-    "author":"Ivan Melnikov",
-    "license":"ISC"
+    "author": "Ivan Melnikov",
+    "license": "ISC",
+    "dependencies": {
+        "https": "^1.0.0"
+    }
 }
