@@ -27,6 +27,7 @@ gcoords.getCoords("Rome, Italy",function(resp) {
 ### Roadmap
  - [x] JSON support
  - [ ] XML support
+ - [ ] Coordinates to location
  - [ ] Error handling/address cleanup/validation
  - [ ] Multiple results
  - [ ] Clean up the code
