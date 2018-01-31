@@ -22,9 +22,7 @@ exports.init = function(apikey, format) {
 
 exports.getCoords = function(inputString,callback) {
 	var address = encodeURIComponent(inputString);
-	var requestUrl = ENDPOINT_URL + "?address=" + address;
-
-	requestUrl += "&key=" + API_KEY;
+	var requestUrl = ENDPOINT_URL + "?address=" + address + "&key=" + API_KEY;
 
 	makeRequest(requestUrl,"json", (resp) => {
 		callback({
@@ -36,9 +34,7 @@ exports.getCoords = function(inputString,callback) {
 
 exports.getLocation = function(coords,callback) {
 	var point = coords[0]+","+coords[1];
-	var requestUrl = ENDPOINT_URL + "?latlng=" + point;
-	
-	requestUrl += "&key=" + API_KEY;
+	var requestUrl = ENDPOINT_URL + "?latlng=" + point + "&key=" + API_KEY;
 
 	makeRequest(requestUrl,"json", (resp) => {
 		callback(resp.results[0].formatted_address);
@@ -69,7 +65,7 @@ function makeRequest(requestUrl,dataformat,callback) {
 					case "ZERO_RESULTS":
 						console.log("Google Geocode API returned zero results.");
 					break;
-					
+
 					//Putting these three together as usability errors
 					case "OVER_QUERY_LIMIT":
 					case "REQUEST_DENIED":
