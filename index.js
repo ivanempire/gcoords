@@ -10,15 +10,14 @@ exports.init = function(apikey, format) {
 		throw "API key or format not specified";
 	}
 
-	API_KEY = apikey;
-
 	var dataFormat = format.toLowerCase();
-
 	if(dataFormat !== "json" && dataFormat !== "xml") {
 		throw "Invalid data format exception";
 	}
 
+	API_KEY = apikey;
 	ENDPOINT_URL += dataFormat;
+
 };
 
 exports.getCoords = function(inputString,callback) {
@@ -56,9 +55,13 @@ function makeRequest(requestUrl,dataformat,callback) {
 			});
 
 			resp.on("end", function() {
-				if(dataformat === "json") {
-					var responseObject = JSON.parse(body);
-					callback(responseObject);
+				if(body.status !== "OK") {
+					console.log("Google Maps API exception: " + JSON.parse(body).error_message);
+				} else {
+					if(dataformat === "json") {
+						var responseObject = JSON.parse(body);
+						callback(responseObject);
+					}
 				}
 			});
 		});

@@ -35,7 +35,7 @@ gcoords.getLocation(["40.714224","-73.961452"],function(resp) {
 ### Roadmap
  - [x] JSON support
  - [ ] XML support
- - [ ] Coordinates to location
+ - [x] Coordinates to location
  - [ ] Error handling/address cleanup/validation
  - [ ] Multiple results
  - [ ] Clean up the code
