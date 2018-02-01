@@ -4,7 +4,7 @@
     "description": "NPM module to look up a city's coordinates and vice versa",
     "main": "index.js",
     "scripts": {
-        "test": "mocha tests/test.js "
+        "test": "mocha tests/test.js && eslint index.js"
     },
     "keywords": [
         "google",
@@ -23,7 +23,13 @@
     "author": "Ivan Melnikov",
     "license": "ISC",
     "dependencies": {
-        "chai": "^4.1.2",
         "https": "^1.0.0"
+    },
+    "devDependencies": {
+        "chai": "^4.1.2",
+        "eslint": "^4.16.0",
+        "eslint-config-airbnb-base": "^12.1.0",
+        "eslint-config-google": "^0.9.1",
+        "eslint-plugin-import": "^2.8.0"
     }
 }
