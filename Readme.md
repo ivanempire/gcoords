@@ -39,4 +39,5 @@ gcoords.getLocation(["40.714224","-73.961452"],function(resp) {
  - [ ] Error handling/address cleanup/validation
  - [ ] Multiple results
  - [ ] Clean up the code
+ - [ ] Promises
  - [ ] Push to NPM

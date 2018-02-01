@@ -49,4 +49,24 @@ describe("Initialization", function() {
 			}
 		});
 	});
+
+	describe("API Responses",function() {
+		//Case OK
+		//Case ZERO_RESULTS
+		//case OVER_QUERY_LIMIT
+		//Case REQUEST_DENIED
+		it("should return REQUEST_DENIED with zero results given invalid credentials",function() {
+			gcoords.init("123ABC", null);
+			try {
+
+			} catch(e) {
+				expect(e.message).to.be.equal("No coordinates specified");
+			}
+			gcoords.getLocation("Boston, Massachusetts",function(resp) {
+
+			})
+		});
+		//Case INVALID_REQUEST
+		//Case UNKNOWN_ERROR
+	})
 });

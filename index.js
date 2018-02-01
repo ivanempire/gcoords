@@ -39,6 +39,7 @@ exports.getLocation = function(coords, callback) {
 	if(!coords) {
 		throw new Error("No coordinates specified");
 	}
+
 	let point = coords[0]+","+coords[1];
 	let requestUrl = ENDPOINT_URL + "?latlng=" + point + "&key=" + API_KEY;
 
@@ -63,7 +64,7 @@ function makeRequest(requestUrl, dataFormat, callback) {
 		});
 
 		resp.on("end", function() {
-			let requestStatus = body.status;
+			let requestStatus = JSON.parse(body).status;
 			switch (requestStatus) {
 			// Result-related errors
 			case "OK":
@@ -82,6 +83,8 @@ function makeRequest(requestUrl, dataFormat, callback) {
 			case "OVER_QUERY_LIMIT":
 			case "REQUEST_DENIED":
 			case "INVALID_REQUEST":
+				callback(responseObject);
+				throw new 
 				console.log("Google Maps API exception: "
 					+ JSON.parse(body).error_message);
 				break;
