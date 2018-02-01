@@ -19,7 +19,7 @@ gcoords.init(<YOUR_API_KEY>,"json");
 Lookup location's coordinates:
 
 ```javascript
-gcoords.getCoords("Rome, Italy")then((result) => {
+gcoords.getCoords("Rome, Italy").then((result) => {
 	console.log(result);
 });
 ```
