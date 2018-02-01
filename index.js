@@ -7,12 +7,12 @@ var DATA_FORMAT = "";
 exports.init = function(apikey, format) {
 
 	if(apikey == null || format == null) {
-		throw "API key or format not specified";
+		throw new Error("API key or format not specified");
 	}
 
 	var dataFormat = format.toLowerCase();
 	if(dataFormat !== "json" && dataFormat !== "xml") {
-		throw "Invalid data format exception";
+		throw new Error("Invalid data format exception");
 	}
 
 	API_KEY = apikey;
