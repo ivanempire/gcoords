@@ -19,16 +19,16 @@ gcoords.init(<YOUR_API_KEY>,"json");
 Lookup location's coordinates:
 
 ```javascript
-gcoords.getCoords("Rome, Italy",function(resp) {
-	console.log(resp);
+gcoords.getCoords("Rome, Italy")then((result) => {
+	console.log(result);
 });
 ```
 
 Lookup coordinates' address:
 
 ````javascript
-gcoords.getLocation(["40.714224","-73.961452"],function(resp) {
-	console.log(resp);
+gcoords.getLocation(["40.714224","-73.961452"]).then((result) => {
+	console.log(result);
 });
 ````
 
@@ -39,5 +39,5 @@ gcoords.getLocation(["40.714224","-73.961452"],function(resp) {
  - [ ] Error handling/address cleanup/validation
  - [ ] Multiple results
  - [ ] Clean up the code
- - [ ] Promises
+ - [x] Promises
  - [ ] Push to NPM

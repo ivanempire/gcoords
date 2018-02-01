@@ -20,17 +20,23 @@ exports.init = function(apikey, format) {
 	ENDPOINT_URL += dataFormat;
 };
 
-exports.getCoords = function(inputString, callback) {
-	if(!inputString) {
-		throw new Error("No query specified");
-	}
-	let address = encodeURIComponent(inputString);
-	let requestUrl = ENDPOINT_URL + "?address=" + address + "&key=" + API_KEY;
+exports.getCoords = function(inputString) {
+	return new Promise((resolve, reject) => {
 
-	makeRequest(requestUrl, "json", (resp) => {
-		callback({
-			"lat": resp.results[0].geometry.location.lat,
-			"lng": resp.results[0].geometry.location.lng,
+		if(!inputString) {
+			throw new Error("No query specified");
+		}
+
+		let address = encodeURIComponent(inputString);
+		let requestUrl = ENDPOINT_URL + "?address=" + address + "&key=" + API_KEY;
+
+		makeRequest(requestUrl,"json").then((result) => {
+			resolve({
+				"lat": result.results[0].geometry.location.lat,
+				"lng": result.results[0].geometry.location.lng,
+			});
+		}).catch((error) => {
+			throw new Error("Request error, API returned: " + error.status);
 		});
 	});
 };
@@ -43,55 +49,52 @@ exports.getLocation = function(coords, callback) {
 	let point = coords[0]+","+coords[1];
 	let requestUrl = ENDPOINT_URL + "?latlng=" + point + "&key=" + API_KEY;
 
-	makeRequest(requestUrl, "json", (resp) => {
-		callback(resp.results[0].formatted_address);
+
+	makeRequest(requestUrl,"json").then((result) => {
+		resolve(result.results[0].formatted_address);
+	}).catch((error) => {
+			throw new Error("Request error, API returned: " + error.status);
 	});
 };
-
 
 /**
  * Sends a request to the Google Geocode API
  * @param {string} requestUrl - The API url to query.
  * @param {string} dataFormat - The data format to return results as.
- * @param {function} callback - Function to call after request is complete.
  */
-function makeRequest(requestUrl, dataFormat, callback) {
-	https.get(requestUrl, (resp) => {
-		let body = "";
 
-		resp.on("data", function(chunk) {
-			body += chunk;
-		});
+function makeRequest(requestUrl, dataFormat) {
+	return new Promise((resolve, reject) => {
+		https.get(requestUrl, (resp) => {
+			let body = "";
 
-		resp.on("end", function() {
-			let requestStatus = JSON.parse(body).status;
-			switch (requestStatus) {
-			// Result-related errors
-			case "OK":
-				if (dataFormat === "json") {
-					let responseObject = JSON.parse(body);
-					callback(responseObject);
+			resp.on("data", function(chunk) {
+				body += chunk;
+			});
+
+			resp.on("end", function() {
+				let responseObject,requestStatus;
+			
+				if(dataFormat === "json") {
+					responseObject = JSON.parse(body);
+					requestStatus = responseObject.status;
 				} else {
-					// XML logic here
+					//XML logic
 				}
-				break;
-			case "ZERO_RESULTS":
-				console.log("Google Geocode API returned zero results.");
-				break;
 
-			// Putting these three together as usability errors
-			case "OVER_QUERY_LIMIT":
-			case "REQUEST_DENIED":
-			case "INVALID_REQUEST":
-				callback(responseObject);
-				throw new 
-				console.log("Google Maps API exception: "
-					+ JSON.parse(body).error_message);
-				break;
-			case "UNKNOWN_ERROR":
-				console.log("Google Geocode API returned an unknown error. Try again.");
-				break;
-			}
+				switch (requestStatus) {
+					case "OK":
+						resolve(responseObject);
+						break;
+					case "ZERO_RESULTS":					
+					case "UNKNOWN_ERROR":	
+					case "OVER_QUERY_LIMIT":
+					case "REQUEST_DENIED":
+					case "INVALID_REQUEST":
+						reject(responseObject);
+						break;
+				}
+			});
 		});
 	});
-}
+};
