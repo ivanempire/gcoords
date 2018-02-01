@@ -4,11 +4,12 @@ const assert = require("assert");
 const chai = require("chai");
 const expect = chai.expect;
 const gcoords = require("../");
+const config = require('./config.json');
 
 describe("Initialization", function() {
 	describe("init()", function() {
 		it("should return null when initialized", function() {
-			assert.equal(gcoords.init("123ABC", "json"), null);
+			assert.equal(gcoords.init(config.api_key, config.format), null);
 		});
 
 		it("should throw an error when API key or format is not specified", function() {
@@ -56,9 +57,11 @@ describe("Initialization", function() {
 		//case OVER_QUERY_LIMIT
 		//Case REQUEST_DENIED
 		it("should return REQUEST_DENIED with zero results given invalid credentials",function() {
-			gcoords.init("123ABC", null);
+			gcoords.init(config.api_key, config.format);
 			try {
-
+				gcoords.getLocation(null, function(resp) {
+					
+				})
 			} catch(e) {
 				expect(e.message).to.be.equal("No coordinates specified");
 			}
