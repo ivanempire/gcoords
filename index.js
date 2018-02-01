@@ -21,6 +21,9 @@ exports.init = function(apikey, format) {
 };
 
 exports.getCoords = function(inputString, callback) {
+	if(!inputString) {
+		throw new Error("No query specified");
+	}
 	let address = encodeURIComponent(inputString);
 	let requestUrl = ENDPOINT_URL + "?address=" + address + "&key=" + API_KEY;
 
@@ -33,6 +36,9 @@ exports.getCoords = function(inputString, callback) {
 };
 
 exports.getLocation = function(coords, callback) {
+	if(!coords) {
+		throw new Error("No coordinates specified");
+	}
 	let point = coords[0]+","+coords[1];
 	let requestUrl = ENDPOINT_URL + "?latlng=" + point + "&key=" + API_KEY;
 
