@@ -64,7 +64,6 @@ exports.getLocation = function(coords,format) {
 		let point = coords[0]+","+coords[1];
 		let requestUrl = ENDPOINT_URL + dataFormat + "?latlng=" + point + "&key=" + API_KEY;
 
-
 		makeRequest(requestUrl).then((result) => {
 			if(dataFormat === "json") {
 				resolve(result.results[0].formatted_address);
