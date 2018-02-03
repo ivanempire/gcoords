@@ -32,16 +32,26 @@ exports.getCoords = function(inputString,format) {
 		let address = encodeURIComponent(inputString);
 		let requestUrl = ENDPOINT_URL + dataFormat + "?address=" + address + "&key=" + API_KEY;
 
-		makeRequest(requestUrl).then((result) => {
+		makeRequest(requestUrl,dataFormat).then((result) => {
 				if(dataFormat === "json") {
 					resolve({
 						"lat": result.results[0].geometry.location.lat,
 						"lng": result.results[0].geometry.location.lng,
 					});	
 				} else if(dataFormat === "xml") {
-					//XML logic here
+					let dParser = new DomParser();
+					let responseObject = dParser.parseFromString(result.rawHTML);
+					let locationTag = responseObject.getElementsByTagName("location")[0];
+					//console.log(typeof(responseObject));
+					//console.log(Object.keys(responseObject));
+					//console.log(locationTag);
+					//console.log(responseObject);
+					//resolve(locationTag);
+					resolve(locationTag);
 				}
 		}).catch((error) => {
+			console.log("In the error?");
+			console.log(error);
 			throw new Error("Request error, API returned: " + error.status);
 		});
 	});
@@ -64,7 +74,7 @@ exports.getLocation = function(coords,format) {
 		let point = coords[0]+","+coords[1];
 		let requestUrl = ENDPOINT_URL + dataFormat + "?latlng=" + point + "&key=" + API_KEY;
 
-		makeRequest(requestUrl).then((result) => {
+		makeRequest(requestUrl,dataFormat).then((result) => {
 			if(dataFormat === "json") {
 				resolve(result.results[0].formatted_address);
 			} else if(dataFormat === "xml") {
@@ -92,7 +102,7 @@ function checkFormat(inputFormat) {
  * Sends a request to the Google Geocode API
  * @param {string} requestUrl - The API url to query.
  */
-function makeRequest(requestUrl) {
+function makeRequest(requestUrl,dataFormat) {
 	console.log(requestUrl);
 	return new Promise((resolve, reject) => {
 		https.get(requestUrl, (resp) => {
@@ -103,11 +113,23 @@ function makeRequest(requestUrl) {
 			});
 
 			resp.on("end", function() {
-				let responseObject = JSON.parse(body);
-				let requestStatus = responseObject.status;
+				
+				let responseObject,requestStatus;
+
+				if(dataFormat === "json") {
+					responseObject = JSON.parse(body);
+					requestStatus = responseObject.status;
+				} else {
+					let dParser = new DomParser();
+					responseObject = dParser.parseFromString(body);
+					requestStatus = responseObject.getElementsByTagName("status")[0].innerHTML;
+				}
+				
+				console.log(requestStatus);
 
 				switch (requestStatus) {
 					case "OK":
+						console.log("In resolution block!");
 						resolve(responseObject);
 						break;
 					case "ZERO_RESULTS":					
