@@ -48,8 +48,13 @@ exports.getCoords = function(inputString,format) {
 };
 
 exports.getLocation = function(coords,format) {
-	
-	let dataFormat = checkFormat(format.toLowerCase());
+	let dataFormat = "";
+
+	if(format) {
+		dataFormat = checkFormat(format.toLowerCase());
+	} else {
+		dataFormat = "json";
+	}
 
 	return new Promise((resolve, reject) => {
 		if(!coords) {
@@ -57,7 +62,7 @@ exports.getLocation = function(coords,format) {
 		}
 
 		let point = coords[0]+","+coords[1];
-		let requestUrl = ENDPOINT_URL + dataFormat + "?address=" + address + "&key=" + API_KEY;
+		let requestUrl = ENDPOINT_URL + dataFormat + "?latlng=" + point + "&key=" + API_KEY;
 
 
 		makeRequest(requestUrl).then((result) => {
