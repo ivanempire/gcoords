@@ -10,10 +10,10 @@ Import it into your project:
 const gcoords = require("gcoords");
 ```
 
-Initialize with an API key and data format.
+Initialize with an API key:
 
 ```javascript
-gcoords.init(<YOUR_API_KEY>,"json");
+gcoords.init(<YOUR_API_KEY>);
 ```
 
 Lookup location's coordinates:
@@ -31,6 +31,23 @@ gcoords.getLocation(["40.714224","-73.961452"]).then((result) => {
 	console.log(result);
 });
 ````
+
+Both functions support a second parameter - the data format. If left blank, the default is json. Some examples:
+
+````javascript
+gcoords.getLocation(["40.714224","-73.961452"],"json").then((result) => {
+	//Will return JSON
+});
+
+gcoords.getLocation(["40.714224","-73.961452"]).then((result) => {
+	//Will also return JSON
+});
+
+gcoords.getLocation(["40.714224","-73.961452"],"xml").then((result) => {
+	//XML because why not...
+});
+````
+
 
 ### Roadmap
  - [x] JSON support

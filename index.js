@@ -5,24 +5,24 @@ const DomParser = require("dom-parser");
 
 let API_KEY = "";
 let ENDPOINT_URL = "https://maps.googleapis.com/maps/api/geocode/";
-let DATA_FORMAT = "";
 
-exports.init = function(apikey, format) {
-	if (apikey == null || format == null) {
-		throw new Error("API key or format not specified");
-	}
-
-	let dataFormat = format.toLowerCase();
-	if (dataFormat !== "json" && dataFormat !== "xml") {
-		throw new Error("Invalid data format exception");
+exports.init = function(apikey) {
+	if (apikey == null) {
+		throw new Error("API key not specified");
 	}
 
 	API_KEY = apikey;
-	ENDPOINT_URL += dataFormat;
-	DATA_FORMAT = dataFormat;
 };
 
-exports.getCoords = function(inputString) {
+exports.getCoords = function(inputString,format) {
+	let dataFormat = "";
+
+	if(format) {
+		dataFormat = checkFormat(format.toLowerCase());
+	} else {
+		dataFormat = "json";
+	}
+
 	return new Promise((resolve, reject) => {
 
 		if(!inputString) {
@@ -30,38 +30,41 @@ exports.getCoords = function(inputString) {
 		}
 
 		let address = encodeURIComponent(inputString);
-		let requestUrl = ENDPOINT_URL + "?address=" + address + "&key=" + API_KEY;
+		let requestUrl = ENDPOINT_URL + dataFormat + "?address=" + address + "&key=" + API_KEY;
 
-		makeRequest(requestUrl,DATA_FORMAT).then((result) => {
-			if(DATA_FORMAT === "json") {
-				resolve({
-					"lat": result.results[0].geometry.location.lat,
-					"lng": result.results[0].geometry.location.lng,
-				});
-			} else {
-				console.log("XML result!");
-			}
+		makeRequest(requestUrl).then((result) => {
+				if(dataFormat === "json") {
+					resolve({
+						"lat": result.results[0].geometry.location.lat,
+						"lng": result.results[0].geometry.location.lng,
+					});	
+				} else if(dataFormat === "xml") {
+					//XML logic here
+				}
 		}).catch((error) => {
 			throw new Error("Request error, API returned: " + error.status);
 		});
 	});
 };
 
-exports.getLocation = function(coords) {
+exports.getLocation = function(coords,format) {
+	
+	let dataFormat = checkFormat(format.toLowerCase());
+
 	return new Promise((resolve, reject) => {
 		if(!coords) {
 			throw new Error("No coordinates specified");
 		}
 
 		let point = coords[0]+","+coords[1];
-		let requestUrl = ENDPOINT_URL + "?latlng=" + point + "&key=" + API_KEY;
+		let requestUrl = ENDPOINT_URL + dataFormat + "?address=" + address + "&key=" + API_KEY;
 
 
-		makeRequest(requestUrl,DATA_FORMAT).then((result) => {
-			if(DATA_FORMAT === "json") {
+		makeRequest(requestUrl).then((result) => {
+			if(dataFormat === "json") {
 				resolve(result.results[0].formatted_address);
-			} else {
-				console.log("XML result!");
+			} else if(dataFormat === "xml") {
+				//XML logic here
 			}
 		}).catch((error) => {
 			throw new Error("Request error, API returned: " + error.status);
@@ -69,13 +72,24 @@ exports.getLocation = function(coords) {
 	});
 };
 
+/**
+ * Verifies the validity of the user's data format
+ * @param {string} inputFormat - User inputted data format.
+ */
+function checkFormat(inputFormat) {
+	if(inputFormat === "xml" || inputFormat === "json" ) {
+		return inputFormat;
+	} else {
+		throw new Error("Invalid format specified!");
+	}
+}
 
 /**
  * Sends a request to the Google Geocode API
  * @param {string} requestUrl - The API url to query.
- * @param {string} dataFormat - The data format to return results as.
  */
-function makeRequest(requestUrl, dataFormat) {
+function makeRequest(requestUrl) {
+	console.log(requestUrl);
 	return new Promise((resolve, reject) => {
 		https.get(requestUrl, (resp) => {
 			let body = "";
@@ -85,16 +99,8 @@ function makeRequest(requestUrl, dataFormat) {
 			});
 
 			resp.on("end", function() {
-				let responseObject,requestStatus;
-			
-				if(dataFormat === "json") {
-					responseObject = JSON.parse(body);
-					requestStatus = responseObject.status;
-				} else {
-					let dParser = new DomParser();
-					responseObject = dParser.parseFromString(body);
-					requestStatus = responseObject.getElementsByTagName("status")[0].innerHTML;
-				}
+				let responseObject = JSON.parse(body);
+				let requestStatus = responseObject.status;
 
 				switch (requestStatus) {
 					case "OK":
