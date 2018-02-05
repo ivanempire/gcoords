@@ -27,7 +27,6 @@
     "author": "Ivan Melnikov",
     "license": "MIT",
     "dependencies": {
-        "dom-parser": "^0.1.5",
         "https": "^1.0.0",
         "xml-parser": "^1.2.1"
     },

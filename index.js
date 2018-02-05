@@ -1,9 +1,7 @@
 "use strict";
 
 const https = require("https");
-const DomParser = require("dom-parser");
-const inspect = require("util").inspect;
-const parse = require('xml-parser');
+const parse = require("xml-parser");
 
 let API_KEY = "";
 let ENDPOINT_URL = "https://maps.googleapis.com/maps/api/geocode/json";
@@ -55,6 +53,10 @@ exports.getCoords = function(inputString,format) {
 exports.getLocation = function(coords,format) {
 	let dataFormat = "";
 
+	if(!coords) {
+		throw new Error("No coordinates specified");
+	}
+
 	if(format) {
 		dataFormat = checkFormat(format.toLowerCase());
 	} else {
@@ -62,9 +64,6 @@ exports.getLocation = function(coords,format) {
 	}
 
 	return new Promise((resolve, reject) => {
-		if(!coords) {
-			throw new Error("No coordinates specified");
-		}
 
 		let point = coords[0]+","+coords[1];
 		let requestUrl = ENDPOINT_URL + "?latlng=" + point + "&key=" + API_KEY;
@@ -73,8 +72,9 @@ exports.getLocation = function(coords,format) {
 			if(dataFormat === "json") {
 				resolve(result.results[0].formatted_address);
 			} else if(dataFormat === "xml") {
-				let responseObject = parse(result.rawHTML);
-				resolve("<formatted_address>" + responseObject.root.children[1].children[1].content + "</formatted_address>");
+				resolve("<formatted_address>" + 
+					result.results[0].formatted_address + 
+					"</formatted_address>");
 			}
 		}).catch((error) => {
 			throw new Error("Request error, API returned: " + error.status);
@@ -99,6 +99,7 @@ function checkFormat(inputFormat) {
  * @param {string} requestUrl - The API url to query.
  */
 function makeRequest(requestUrl) {
+	
 	return new Promise((resolve, reject) => {
 		https.get(requestUrl, (resp) => {
 			let body = "";
