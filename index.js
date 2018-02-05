@@ -2,9 +2,11 @@
 
 const https = require("https");
 const DomParser = require("dom-parser");
+const inspect = require("util").inspect;
+const parse = require('xml-parser');
 
 let API_KEY = "";
-let ENDPOINT_URL = "https://maps.googleapis.com/maps/api/geocode/";
+let ENDPOINT_URL = "https://maps.googleapis.com/maps/api/geocode/json";
 
 exports.init = function(apikey) {
 	if (apikey == null) {
@@ -17,6 +19,10 @@ exports.init = function(apikey) {
 exports.getCoords = function(inputString,format) {
 	let dataFormat = "";
 
+	if(!inputString) {
+		throw new Error("No query specified");
+	}
+	
 	if(format) {
 		dataFormat = checkFormat(format.toLowerCase());
 	} else {
@@ -25,12 +31,8 @@ exports.getCoords = function(inputString,format) {
 
 	return new Promise((resolve, reject) => {
 
-		if(!inputString) {
-			throw new Error("No query specified");
-		}
-
 		let address = encodeURIComponent(inputString);
-		let requestUrl = ENDPOINT_URL + dataFormat + "?address=" + address + "&key=" + API_KEY;
+		let requestUrl = ENDPOINT_URL + "?address=" + address + "&key=" + API_KEY;
 
 		makeRequest(requestUrl,dataFormat).then((result) => {
 				if(dataFormat === "json") {
@@ -39,19 +41,12 @@ exports.getCoords = function(inputString,format) {
 						"lng": result.results[0].geometry.location.lng,
 					});	
 				} else if(dataFormat === "xml") {
-					let dParser = new DomParser();
-					let responseObject = dParser.parseFromString(result.rawHTML);
-					let locationTag = responseObject.getElementsByTagName("location")[0];
-					//console.log(typeof(responseObject));
-					//console.log(Object.keys(responseObject));
-					//console.log(locationTag);
-					//console.log(responseObject);
-					//resolve(locationTag);
-					resolve(locationTag);
+					resolve(
+						"<location><lat>" + result.results[0].geometry.location.lat + "</lat><lng>"
+						+ result.results[0].geometry.location.lng +
+						"</lng></location>");
 				}
 		}).catch((error) => {
-			console.log("In the error?");
-			console.log(error);
 			throw new Error("Request error, API returned: " + error.status);
 		});
 	});
@@ -72,13 +67,14 @@ exports.getLocation = function(coords,format) {
 		}
 
 		let point = coords[0]+","+coords[1];
-		let requestUrl = ENDPOINT_URL + dataFormat + "?latlng=" + point + "&key=" + API_KEY;
+		let requestUrl = ENDPOINT_URL + "?latlng=" + point + "&key=" + API_KEY;
 
-		makeRequest(requestUrl,dataFormat).then((result) => {
+		makeRequest(requestUrl).then((result) => {
 			if(dataFormat === "json") {
 				resolve(result.results[0].formatted_address);
 			} else if(dataFormat === "xml") {
-				//XML logic here
+				let responseObject = parse(result.rawHTML);
+				resolve("<formatted_address>" + responseObject.root.children[1].children[1].content + "</formatted_address>");
 			}
 		}).catch((error) => {
 			throw new Error("Request error, API returned: " + error.status);
@@ -102,8 +98,7 @@ function checkFormat(inputFormat) {
  * Sends a request to the Google Geocode API
  * @param {string} requestUrl - The API url to query.
  */
-function makeRequest(requestUrl,dataFormat) {
-	console.log(requestUrl);
+function makeRequest(requestUrl) {
 	return new Promise((resolve, reject) => {
 		https.get(requestUrl, (resp) => {
 			let body = "";
@@ -113,23 +108,11 @@ function makeRequest(requestUrl,dataFormat) {
 			});
 
 			resp.on("end", function() {
-				
-				let responseObject,requestStatus;
-
-				if(dataFormat === "json") {
-					responseObject = JSON.parse(body);
-					requestStatus = responseObject.status;
-				} else {
-					let dParser = new DomParser();
-					responseObject = dParser.parseFromString(body);
-					requestStatus = responseObject.getElementsByTagName("status")[0].innerHTML;
-				}
-				
-				console.log(requestStatus);
+				let responseObject = JSON.parse(body);
+				let requestStatus = responseObject.status;
 
 				switch (requestStatus) {
 					case "OK":
-						console.log("In resolution block!");
 						resolve(responseObject);
 						break;
 					case "ZERO_RESULTS":					
