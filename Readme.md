@@ -51,10 +51,10 @@ gcoords.getLocation(["40.714224","-73.961452"],"xml").then((result) => {
 
 ### Roadmap
  - [x] JSON support
- - [ ] XML support
+ - [x] XML support
  - [x] Coordinates to location
  - [ ] Error handling/address cleanup/validation
  - [ ] Multiple results
- - [ ] Clean up the code
+ - [x] Clean up the code
  - [x] Promises
- - [ ] Push to NPM
+ - [x] Push to NPM
