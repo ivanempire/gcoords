@@ -15,6 +15,10 @@ exports.init = function(apikey) {
 };
 
 exports.getCoords = function(inputString,format) {
+	if(!checkKey()) {
+		throw new Error("API key not specified");
+	}
+	
 	let dataFormat = "";
 
 	if(!inputString) {
@@ -51,6 +55,10 @@ exports.getCoords = function(inputString,format) {
 };
 
 exports.getLocation = function(coords,format) {
+	if(!checkKey()) {
+		throw new Error("API key not specified");
+	}
+
 	let dataFormat = "";
 
 	if(!coords) {
@@ -92,6 +100,13 @@ function checkFormat(inputFormat) {
 	} else {
 		throw new Error("Invalid format specified!");
 	}
+}
+
+function checkKey() {
+	if(!API_KEY) {
+		return false;
+	}
+	return true;
 }
 
 /**

@@ -31,6 +31,14 @@ describe("Initialization", function() {
 			}
 		});
 
+		it("should throw an error if init() was not run",function() {
+			try {
+				gcoords.getCoords("Rome, Italy");
+			} catch(e) {
+				expect(e.message).to.be.equal("API key not specified");
+			}
+		});		
+
 		it("should return a JSON object of coordinates by default", function() {
 			gcoords.init(config.api_key);
 
@@ -58,6 +66,14 @@ describe("Initialization", function() {
 				gcoords.getLocation(null);
 			} catch(e) {
 				expect(e.message).to.be.equal("No coordinates specified");
+			}
+		});
+
+		it("should throw an error if init() was not run",function() {
+			try {
+				gcoords.getLocation(["40.714224","-73.961452"]);
+			} catch(e) {
+				expect(e.message).to.be.equal("API key not specified");
 			}
 		});
 
