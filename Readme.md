@@ -1,6 +1,6 @@
 # GCoords
 
-A tiny NPM module for looking up coordinates from an address. Relies on the Google Maps web API. You will need to get a key [here](https://developers.google.com/maps/web/). The only dependency is the native https module for making the request.
+A tiny NPM module for looking up coordinates from an address. Relies on the Google Maps web API. You will need to get a key [here](https://developers.google.com/maps/documentation/geocoding/intro). The only dependency is the native https module for making the request.
 
 ## Usage
 
