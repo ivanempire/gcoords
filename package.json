@@ -4,7 +4,7 @@
     "description": "NPM module to look up a city's coordinates and vice versa",
     "main": "index.js",
     "scripts": {
-        "test": "mocha tests/test.js",
+        "test": "mocha tests/test.js"
     },
     "keywords": [
         "google",
