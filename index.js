@@ -1,7 +1,6 @@
 "use strict";
 
 const https = require("https");
-const parse = require("xml-parser");
 
 let API_KEY = "";
 let ENDPOINT_URL = "https://maps.googleapis.com/maps/api/geocode/json";
