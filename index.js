@@ -67,7 +67,7 @@ exports.getLocation = function(coords,format) {
 	if(format) {
 		dataFormat = checkFormat(format.toLowerCase());
 	} else {
-		dataFormat = "json";
+		throw new Error("Invalid format specified!");
 	}
 
 	return new Promise((resolve, reject) => {
